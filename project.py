@@ -1,6 +1,7 @@
 import os
 
 import read_csv
+import build_db
 
 data_file = 'MusicData.csv'
 db_name = 'billboard.db'
@@ -8,13 +9,10 @@ db_name = 'billboard.db'
 print(os.getcwd())
 print(data_file)
 
-read_csv.read_print_csv(data_file)
+#  TASK 1 - READ FROM CSV INTO MEMORY AND PRINT
+data_list = read_csv.read_print_csv(data_file)
 
+# TASK 2 - READ LIST FROM MEMORY INTO DB
+build_db.build_db(db_name, data_list)
 
-# OTHER STUFF
-# with open('MusicData.csv') as my_data:
-#     df = pd.read_csv(my_data, index_col=5)
-# start_date = '1990-01-01'
-# end_date = '2000-01-01'
-# mask = ((df['WeekID'] > start_date) & (df['WeekID'] <= end_date) ) & (df['Week Position'] < 11)
-# ninties = df.loc[mask]
+# TASK - QUERY AND MANIPULATE DATA FROM DB

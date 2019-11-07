@@ -20,3 +20,4 @@ def read_print_csv(data_file):
     else:
         for item in range(int(preview_range)):
             print(my_data_list[item])
+    return my_data_list
