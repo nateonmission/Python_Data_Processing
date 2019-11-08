@@ -37,12 +37,23 @@ def load_data_into_db(db_name, data_list):
         cursor_obj = db.cursor()
         i = 0
         for list_item in data_list:
-            print(list_item)
-            # cursor_obj.execute(
-            #     f"INSERT INTO music VALUES({i}, {list_item[0]}, {list[1]}, {list[2]}, {list[3]}, {list[4]}, {list[5]}, {list[6]}, {list[7]}, {list[8]}, {list[9]} )"
-            # )
-            # i += 1
-            # db.commit()
+            # print(list_item[3])
+            cursor_obj.execute(
+                f"INSERT INTO music VALUES({i}, {list_item[0]}, {list_item[1]}, {list_item[2]}, {list_item[3]}, {list_item[4]}, {list_item[5]}, {list_item[6]}, {list_item[7]}, {list_item[8]} )"
+            )
+            i += 1
+            db.commit()
 
     db = sql_connection(db_name)
     insert_data(db, data_list)
+
+    # db_index = i
+    # db_url = list_item[0]
+    # db_date = list_item[1]
+    # db_position = list_item[2]
+    # db_title = list_item[3]
+    # db_artist = list_item[4]
+    # db_id = list_item[5]
+    # db_prev = list_item[6]
+    # db_peak = list_item[7]
+    # db_dur = list_item[8]

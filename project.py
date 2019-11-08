@@ -15,5 +15,6 @@ data_list = read_csv.read_print_csv(data_file)
 # TASK 2 - READ LIST FROM MEMORY INTO DB
 pause = input("Press any key to build DB")
 build_db.build_db(db_name, data_list)
+build_db.load_data_into_db(db_name, data_list)
 
 # TASK - QUERY AND MANIPULATE DATA FROM DB
