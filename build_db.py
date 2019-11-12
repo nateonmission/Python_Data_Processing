@@ -1,7 +1,19 @@
 # TASK 2 - LOAD DATA INTO A SQL DATABASE
+from os import system, name
 import sqlite3
 from datetime import datetime
 from sqlite3 import Error
+
+
+# define our clear function
+def clear():
+    # for windows
+    if name == 'nt':
+        _ = system('cls')
+
+        # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = system('clear')
 
 
 def build_db(db_name, data_list):
@@ -40,32 +52,21 @@ def load_data_into_db(db_name, data_list):
         for list_item in data_list:
             datetime_object = datetime.strptime(list_item[1], '%m/%d/%Y')
             index = i
-            print(index)
-            print(type(index))
             url = str(list_item[0])
-            print(url)
-            print(type(url))
             date_ref = str(datetime_object)
-            print(date_ref)
-            print(type(date_ref))
             chart_pos = int(list_item[2])
-            print(chart_pos)
-            print(type(chart_pos))
             title = list_item[3]
-            print(title)
-            print(type(title))
             artist = list_item[4]
-            print(artist)
-            print(type(artist))
             song_id = list_item[5]
-            print(song_id)
-            print(type(song_id))
+            print('Loading ' + title + ' by ' + artist + ' (' + date_ref + ')')
+            print(str(index) + ' of ' + str(len(data_list)))
             cursor_obj.execute(
                 f'INSERT INTO music VALUES(?,?,?,?,?,?,?)', (
                     index, url, date_ref, chart_pos, title, artist, song_id
                 )
             )
             i += 1
+
             db.commit()
 
     db = sql_connection(db_name)
