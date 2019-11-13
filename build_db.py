@@ -1,22 +1,20 @@
 # TASK 2 - LOAD DATA INTO A SQL DATABASE
-from os import system, name
+
 import sqlite3
 from datetime import datetime
 from sqlite3 import Error
-
-
-# define our clear function
-def clear():
-    # for windows
-    if name == 'nt':
-        _ = system('cls')
-
-        # for mac and linux(here, os.name is 'posix')
-    else:
-        _ = system('clear')
+import os_stuff
 
 
 def build_db(db_name, data_list):
+    os_stuff.clear()
+    print('TASK 2 - LOAD THE LIST FROM TASK 1 INTO A SQLite DATABASE')
+    print('-------------------------------------')
+    print(' ')
+    print(f'Each line from the original CSV will be parsed and saved to a SQLite DB called {db_name},')
+    print(f"which will be saved to the current directory. First, let's built the DB")
+    print(' ')
+    pause_me = input('Press any key to begin.')
     def sql_connection(db_name):
         try:
             db = sqlite3.connect(db_name)
@@ -38,6 +36,11 @@ def build_db(db_name, data_list):
 
 
 def load_data_into_db(db_name, data_list):
+    print("Now, let's load that DB with the data from our data list.")
+    print("This will take a minute... or ten... or more... Seriously, do you have a book to read?")
+    print(" ")
+    pause_me = input("Press any key to continue.")
+
     def sql_connection(db_name):
         try:
             db = sqlite3.connect(db_name)
@@ -58,7 +61,7 @@ def load_data_into_db(db_name, data_list):
             title = list_item[3]
             artist = list_item[4]
             song_id = list_item[5]
-            print('Loading ' + title + ' by ' + artist + ' (' + date_ref + ')')
+            print('Loading ' + title + ' by ' + artist + ' (week of ' + date_ref + ')')
             print(str(index) + ' of ' + str(len(data_list)))
             cursor_obj.execute(
                 f'INSERT INTO music VALUES(?,?,?,?,?,?,?)', (
@@ -66,19 +69,9 @@ def load_data_into_db(db_name, data_list):
                 )
             )
             i += 1
-
             db.commit()
+            print("Whew... So, that's done.")
+            pause_me = input('Press any key to continue.')
 
     db = sql_connection(db_name)
     insert_data(db, data_list)
-
-    # db_index = i
-    # db_url = list_item[0]
-    # db_date = list_item[1]
-    # db_position = list_item[2]
-    # db_title = list_item[3]
-    # db_artist = list_item[4]
-    # db_id = list_item[5]
-    # db_prev = list_item[6]
-    # db_peak = list_item[7]
-    # db_dur = list_item[8]
