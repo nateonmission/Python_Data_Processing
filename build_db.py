@@ -9,12 +9,13 @@ import os_stuff
 def build_db(db_name, data_list):
     os_stuff.clear()
     print('TASK 2 - LOAD THE LIST FROM TASK 1 INTO A SQLite DATABASE')
-    print('-------------------------------------')
+    print('---------------------------------------------------------')
     print(' ')
     print(f'Each line from the original CSV will be parsed and saved to a SQLite DB called {db_name},')
     print(f"which will be saved to the current directory. First, let's built the DB")
     print(' ')
     pause_me = input('Press any key to begin.')
+
     def sql_connection(db_name):
         try:
             db = sqlite3.connect(db_name)
@@ -70,7 +71,6 @@ def load_data_into_db(db_name, data_list):
             )
             i += 1
             db.commit()
-
 
     db = sql_connection(db_name)
     insert_data(db, data_list)

@@ -3,6 +3,7 @@ import os
 import os_stuff
 import read_csv
 import build_db
+import db_query
 
 data_file = 'MusicData.csv'
 db_name = 'billboard.db'
@@ -24,5 +25,11 @@ skip2 = input("Do you want to skip the DB step and use a pre-loaded DB? (Y/n)")
 if skip2.upper() == 'N':
     build_db.build_db(db_name, data_list)
     build_db.load_data_into_db(db_name, data_list)
+else:
+    pass
 
 # TASK - QUERY AND MANIPULATE DATA FROM DB
+if skip2.upper() == 'N':
+    db_query.db_menu(db_name)
+else:
+    db_query.db_menu(pre_loaded_db)
