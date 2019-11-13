@@ -4,6 +4,7 @@ import sqlite3
 from datetime import datetime
 from sqlite3 import Error
 import os_stuff
+import db_tools
 
 
 def build_db(db_name, data_list):
@@ -16,14 +17,6 @@ def build_db(db_name, data_list):
     print(' ')
     pause_me = input('Press any key to begin.')
 
-    def sql_connection(db_name):
-        try:
-            db = sqlite3.connect(db_name)
-            print("Connection to database has been established")
-            return db
-        except Error:
-            print(Error)
-
     def create_sql_table(db):
         cursor_obj = db.cursor()
         cursor_obj.execute(
@@ -31,7 +24,7 @@ def build_db(db_name, data_list):
         )
         db.commit()
 
-    db = sql_connection(db_name)
+    db = db_tools.sql_connection(db_name)
     create_sql_table(db)
     print("DB has been built")
 
@@ -74,5 +67,6 @@ def load_data_into_db(db_name, data_list):
 
     db = sql_connection(db_name)
     insert_data(db, data_list)
+    db.close()
     print("Whew... So, that's done.")
     pause_me = input('Press any key to continue.')
