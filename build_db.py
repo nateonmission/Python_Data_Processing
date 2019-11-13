@@ -70,8 +70,9 @@ def load_data_into_db(db_name, data_list):
             )
             i += 1
             db.commit()
-            print("Whew... So, that's done.")
-            pause_me = input('Press any key to continue.')
+
 
     db = sql_connection(db_name)
     insert_data(db, data_list)
+    print("Whew... So, that's done.")
+    pause_me = input('Press any key to continue.')
