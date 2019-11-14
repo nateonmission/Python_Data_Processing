@@ -9,11 +9,7 @@ data_file = 'MusicData.csv'
 db_name = 'billboard.db'
 pre_loaded_db = 'pre-loaded.db'
 
-
-if os.path.exists(db_name):
-    os.remove(db_name)
-else:
-    pass
+os_stuff.clear_old_file(db_name)
 
 #  TASK 1 - READ FROM CSV INTO MEMORY AND PRINT
 data_list = read_csv.read_print_csv(data_file)

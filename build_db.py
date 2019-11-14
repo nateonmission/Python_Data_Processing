@@ -27,6 +27,7 @@ def build_db(db_name, data_list):
     db = db_tools.sql_connection(db_name)
     create_sql_table(db)
     print("DB has been built")
+    pause_me = input('Press any key to continue')
 
 
 def load_data_into_db(db_name, data_list):
