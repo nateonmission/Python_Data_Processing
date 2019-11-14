@@ -1,10 +1,12 @@
+# TASK 3 - QUERY THE SQLite DB AND GENERATE INFORMATION FROM THE DATA
+
 import sqlite3
 from datetime import datetime
 from sqlite3 import Error
 import os_stuff
 
 
-def db_menu(db_name):
+def intro(db_name):
     os_stuff.clear()
     print("TASK 3 - QUERYING THE DB")
     print('------------------------')
@@ -16,3 +18,7 @@ def db_menu(db_name):
     print('')
     print("DOH! This feature hasn't been implemented, yet! ")
     print('#GracefulExit')
+
+
+def db_query(db_name):
+    intro(db_name)

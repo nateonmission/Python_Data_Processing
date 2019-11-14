@@ -9,4 +9,3 @@ def sql_connection(db_name):
         return db
     except Error:
         print(Error)
-        

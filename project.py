@@ -9,8 +9,11 @@ data_file = 'MusicData.csv'
 db_name = 'billboard.db'
 pre_loaded_db = 'pre-loaded.db'
 
-print(os.getcwd())
-print(data_file)
+
+if os.path.exists(db_name):
+    os.remove(db_name)
+else:
+    pass
 
 #  TASK 1 - READ FROM CSV INTO MEMORY AND PRINT
 data_list = read_csv.read_print_csv(data_file)
@@ -30,6 +33,6 @@ else:
 
 # TASK - QUERY AND MANIPULATE DATA FROM DB
 if skip2.upper() == 'N':
-    db_query.db_menu(db_name)
+    db_query.db_query(db_name)
 else:
-    db_query.db_menu(pre_loaded_db)
+    db_query.db_query(pre_loaded_db)
