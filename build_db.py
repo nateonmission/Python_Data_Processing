@@ -36,14 +36,6 @@ def load_data_into_db(db_name, data_list):
     print(" ")
     pause_me = input("Press any key to continue.")
 
-    def sql_connection(db_name):
-        try:
-            db = sqlite3.connect(db_name)
-            print("Connection to database has been established")
-            return db
-        except Error:
-            print(Error)
-
     def insert_data(db, data_list):
         cursor_obj = db.cursor()
         i = 0
@@ -66,7 +58,7 @@ def load_data_into_db(db_name, data_list):
             i += 1
             db.commit()
 
-    db = sql_connection(db_name)
+    db = db_tools.sql_connection(db_name)
     insert_data(db, data_list)
     db.close()
     print("Whew... So, that's done.")
