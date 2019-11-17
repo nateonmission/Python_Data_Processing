@@ -28,6 +28,7 @@ def query_menu(db_name):
         print('******************** PICK A QUERY ********************')
         print('01 - Songs in Top 10 for a given year')
         print('02 - Songs in Top 10 for a given year and month')
+        print('03 - Search by Artist')
         print('99 - EXIT')
         print('')
         selection = input("Query number: ")
@@ -37,6 +38,9 @@ def query_menu(db_name):
                 repeat = 1
             elif int(selection) == 2:
                 top_10_by_yr_and_mo(db_name)
+                repeat = 1
+            elif int(selection) == 3:
+                query_by_artist(db_name)
                 repeat = 1
             elif int(selection) == 99:
                 break
@@ -93,7 +97,7 @@ def top_10_by_yr_and_mo(db_name):
             repeat = 0
     repeat = 1
     while repeat == 1:
-        selected_month = input("Enter a month: ")
+        selected_month = input("Enter a month as a 2 digit number (e.g. May = 05): ")
         if not selected_month.isdigit():
             print("Invalid month!")
             pause_me = input("Press any key to continue")
@@ -105,6 +109,19 @@ def top_10_by_yr_and_mo(db_name):
     date_string = selected_year + "-" + selected_month
     db_response = date_query(cur, date_string)
     print_db_results(db_response)
+    db.close()
+
+
+def query_by_artist(db_name):
+    db = db_tools.sql_connection(db_name)
+    print('opening data...')
+    cur = db.cursor()
+    selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
+    ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" AND chart_position <= 10 GROUP BY song_id'
+    cur.execute(ex_str)
+    db_response = cur.fetchall()
+    print_db_results(db_response)
+    db.close()
 
 
 def date_query(cur, date_string):

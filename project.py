@@ -27,7 +27,7 @@ if skip2.upper() == 'N':
 else:
     pass
 
-# TASK - QUERY AND MANIPULATE DATA FROM DB
+# TASK 3 - QUERY AND MANIPULATE DATA FROM DB
 if skip2.upper() == 'N':
     db_query.db_query(db_name)
 else:
