@@ -3,6 +3,12 @@
 import sqlite3
 from datetime import datetime
 from sqlite3 import Error
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from dateutil import parser
+from matplotlib import style
+style.use('fivethirtyeight')
+
 import os_stuff
 import db_tools
 
@@ -16,9 +22,6 @@ def intro(db_name):
           f" in a structured manner.")
     print(' ')
     pause_me = input('Press any key to begin.')
-    # print('')
-    # print("DOH! This feature hasn't been implemented, yet! ")
-    # print('#GracefulExit')
 
 
 def query_menu(db_name):
@@ -28,7 +31,10 @@ def query_menu(db_name):
         print('******************** PICK A QUERY ********************')
         print('01 - Songs in Top 10 for a given year')
         print('02 - Songs in Top 10 for a given year and month')
-        print('03 - Search by Artist')
+        print('03 - Songs in Top 10 for a given Artist')
+        print('')
+        print('11 - Artist popularity over time')
+        print('')
         print('99 - EXIT')
         print('')
         selection = input("Query number: ")
@@ -41,6 +47,9 @@ def query_menu(db_name):
                 repeat = 1
             elif int(selection) == 3:
                 query_by_artist(db_name)
+                repeat = 1
+            elif int(selection) == 11:
+                plot_pop_over_time(db_name)
                 repeat = 1
             elif int(selection) == 99:
                 break
@@ -124,6 +133,58 @@ def query_by_artist(db_name):
     db.close()
 
 
+def plot_pop_over_time(db_name):
+    db = db_tools.sql_connection(db_name)
+    print('opening data...')
+    cur = db.cursor()
+    artist_repeat = 1
+    while artist_repeat == 1:
+        selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
+        ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" AND chart_position <= 10 GROUP BY song_id'
+        cur.execute(ex_str)
+        os_stuff.clear()
+        db_response = cur.fetchall()
+        if len(db_response) != 0:
+            artist_repeat = 0
+        else:
+            pass
+    songs = []
+    menu_counter = 1
+    for line in db_response:
+        print(f'{menu_counter}. {line[4]} ({line[2][:10]})')
+        songs.append(line[4])
+        menu_counter += 1
+    repeat = 1
+    while repeat == 1:
+        song_selection = input("Select a song by the number: ")
+        if song_selection.isdigit():
+            if 1 < int(song_selection) < len(songs)+1:
+                repeat = 0
+            else:
+                pass
+        else:
+            pass
+    song_index = int(song_selection) - 1
+    print(f"You chose {songs[song_index]}")
+    ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" AND song_title LIKE "{songs[song_index]}" ORDER BY week_id ASC'
+    cur.execute(ex_str)
+    os_stuff.clear()
+    db_response = cur.fetchall()
+    dates = []
+    chart_positions = []
+    for line in db_response:
+        line_date = line[2][:10]
+        dates.append(datetime.strptime(line_date, '%Y-%m-%d'))
+        chart_positions.append(line[3])
+    plt.plot_date(dates, chart_positions, '-')
+    plt.show()
+    for item in dates:
+        print(f"{item} - {chart_positions[dates.index(item)]}")
+    pause_me = input("Press any key to continue.")
+
+
+
+# HELPER FUNCTIONS
 def date_query(cur, date_string):
     ex_str = f'SELECT * FROM music WHERE week_id LIKE "%{date_string}%" AND chart_position <= 10 GROUP BY song_id'
     cur.execute(ex_str)
