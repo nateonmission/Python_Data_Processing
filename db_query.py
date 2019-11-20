@@ -33,7 +33,8 @@ def query_menu(db_name):
         print('02 - Songs in Top 10 for a given year and month')
         print('03 - Songs in Top 10 for a given Artist')
         print('')
-        print('11 - Artist popularity over time')
+        print('11 - Plots Song Popularity over time')
+        print('12 - Plots Artist Popularity over time')
         print('')
         print('99 - EXIT')
         print('')
@@ -49,7 +50,10 @@ def query_menu(db_name):
                 query_by_artist(db_name)
                 repeat = 1
             elif int(selection) == 11:
-                plot_pop_over_time(db_name)
+                plot_song_pop_over_time(db_name)
+                repeat = 1
+            elif int(selection) == 12:
+                plot_artist_pop_over_time(db_name)
                 repeat = 1
             elif int(selection) == 99:
                 break
@@ -126,21 +130,21 @@ def query_by_artist(db_name):
     print('opening data...')
     cur = db.cursor()
     selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
-    ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" AND chart_position <= 10 GROUP BY song_id'
+    ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" AND chart_position <= 10 GROUP BY song_id ORDER BY week_id ASC'
     cur.execute(ex_str)
     db_response = cur.fetchall()
     print_db_results(db_response)
     db.close()
 
 
-def plot_pop_over_time(db_name):
+def plot_song_pop_over_time(db_name):
     db = db_tools.sql_connection(db_name)
     print('opening data...')
     cur = db.cursor()
     artist_repeat = 1
     while artist_repeat == 1:
         selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
-        ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" AND chart_position <= 10 GROUP BY song_id'
+        ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" GROUP BY song_id ORDER BY week_id ASC'
         cur.execute(ex_str)
         os_stuff.clear()
         db_response = cur.fetchall()
@@ -150,15 +154,16 @@ def plot_pop_over_time(db_name):
             pass
     songs = []
     menu_counter = 1
+    os_stuff.clear()
     for line in db_response:
-        print(f'{menu_counter}. {line[4]} ({line[2][:10]})')
+        print(f'{menu_counter}. {line[4]} by {line[5]} ({line[2][:10]})')
         songs.append(line[4])
         menu_counter += 1
     repeat = 1
     while repeat == 1:
         song_selection = input("Select a song by the number: ")
         if song_selection.isdigit():
-            if 1 < int(song_selection) < len(songs)+1:
+            if 0 < int(song_selection) < len(songs)+1:
                 repeat = 0
             else:
                 pass
@@ -177,10 +182,38 @@ def plot_pop_over_time(db_name):
         dates.append(datetime.strptime(line_date, '%Y-%m-%d'))
         chart_positions.append(line[3])
     plt.plot_date(dates, chart_positions, '-')
+    plt.gca().invert_yaxis()
     plt.show()
-    for item in dates:
-        print(f"{item} - {chart_positions[dates.index(item)]}")
     pause_me = input("Press any key to continue.")
+
+
+def plot_artist_pop_over_time(db_name):
+    db = db_tools.sql_connection(db_name)
+    print('opening data...')
+    cur = db.cursor()
+    artist_repeat = 1
+    while artist_repeat == 1:
+        selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
+        ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" ORDER BY week_id ASC'
+        cur.execute(ex_str)
+        os_stuff.clear()
+        db_response = cur.fetchall()
+        if len(db_response) != 0:
+            artist_repeat = 0
+        else:
+            print('No results found')
+            pause_me = input('Press ENTER to Continue')
+            pass
+    dates = []
+    chart_positions = []
+    for line in db_response:
+        line_date = line[2][:10]
+        dates.append(datetime.strptime(line_date, '%Y-%m-%d'))
+        chart_positions.append(line[3])
+    plt.plot_date(dates, chart_positions, '-')
+    plt.gca().invert_yaxis()
+    plt.show()
+    pause_me = input("Press ENTER key to continue.")
 
 
 
@@ -197,7 +230,7 @@ def print_db_results(db_response):
         print(item[4] + " by " + item[5])
     print('')
     print(str(len(db_response)) + " total songs found.")
-    pause_me = input('Press any key to continue')
+    pause_me = input('Press ENTER key to continue')
 
 
 def db_query(db_name):

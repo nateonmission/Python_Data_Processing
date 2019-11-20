@@ -5,6 +5,11 @@ the Billboard Hot 100 and parses and saves it into a SQLite DB.
 It, then, provide several options for generating query-based reports
 based on that data.
 
+## Requirements
+Matplotlib
+
+
+## Instuctions
 To run the app:
 Save all the files to the same directory.
 type `python project.py` and press `ENTER`

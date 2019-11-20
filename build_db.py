@@ -15,7 +15,7 @@ def build_db(db_name, data_list):
     print(f'Each line from the original CSV will be parsed and saved to a SQLite DB called {db_name},')
     print(f"which will be saved to the current directory. First, let's built the DB")
     print(' ')
-    pause_me = input('Press any key to begin.')
+    pause_me = input('Press ENTER key to begin.')
 
     def create_sql_table(db):
         cursor_obj = db.cursor()
@@ -27,14 +27,14 @@ def build_db(db_name, data_list):
     db = db_tools.sql_connection(db_name)
     create_sql_table(db)
     print("DB has been built")
-    pause_me = input('Press any key to continue')
+    pause_me = input('Press ENTER key to continue')
 
 
 def load_data_into_db(db_name, data_list):
     print("Now, let's load that DB with the data from our data list.")
     print("This will take a minute... or ten... or more... Seriously, do you have a book to read?")
     print(" ")
-    pause_me = input("Press any key to continue.")
+    pause_me = input("Press ENTER key to continue.")
 
     def insert_data(db, data_list):
         cursor_obj = db.cursor()
@@ -62,4 +62,4 @@ def load_data_into_db(db_name, data_list):
     insert_data(db, data_list)
     db.close()
     print("Whew... So, that's done.")
-    pause_me = input('Press any key to continue.')
+    pause_me = input('Press ENTER key to continue.')

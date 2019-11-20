@@ -12,7 +12,7 @@ def read_print_csv(data_file):
     print(f'The file {data_file} will be read from the current directory and each line added to a list, '
           f'which will, then, be returned')
     print(' ')
-    pause_me = input('Press any key to begin.')
+    pause_me = input('Press ENTER key to begin.')
     with open(data_file, 'r') as my_data:
         my_data_list = list(csv.reader(my_data))
 
@@ -34,5 +34,5 @@ def read_print_csv(data_file):
         for item in range(int(preview_range)):
             print(my_data_list[item])
     print(' ')
-    pause_me = input('Press any key to continue to the next step.')
+    pause_me = input('Press ENTER key to continue to the next step.')
     return my_data_list
