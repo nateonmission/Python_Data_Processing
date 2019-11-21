@@ -1,16 +1,12 @@
 # TASK 3 - QUERY THE SQLite DB AND GENERATE INFORMATION FROM THE DATA
-
-import sqlite3
-from datetime import datetime
-from sqlite3 import Error
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-from dateutil import parser
-from matplotlib import style
-style.use('fivethirtyeight')
-
 import os_stuff
 import db_tools
+
+import pandas as pd
+from datetime import datetime
+import matplotlib.pyplot as plt
+from matplotlib import style
+style.use('fivethirtyeight')
 
 
 def intro(db_name):
@@ -21,7 +17,7 @@ def intro(db_name):
     print(f"In this step, you'll walk through pulling information from the DB file ({db_name})"
           f" in a structured manner.")
     print(' ')
-    pause_me = input('Press any key to begin.')
+    pause_me = input('Press ENTER key to begin.')
 
 
 def query_menu(db_name):
@@ -35,6 +31,8 @@ def query_menu(db_name):
         print('')
         print('11 - Plots Song Popularity over time')
         print('12 - Plots Artist Popularity over time')
+        print('')
+        print('21 - Stats by Artist')
         print('')
         print('99 - EXIT')
         print('')
@@ -55,6 +53,9 @@ def query_menu(db_name):
             elif int(selection) == 12:
                 plot_artist_pop_over_time(db_name)
                 repeat = 1
+            elif int(selection) == 21:
+                stats_by_artist(db_name)
+                repeat = 1
             elif int(selection) == 99:
                 break
             else:
@@ -64,6 +65,7 @@ def query_menu(db_name):
     print('GOOD BYE')
 
 
+# BASIC QUERIES
 def top_10_by_year(db_name):
     db = db_tools.sql_connection(db_name)
     print('opening data...')
@@ -79,7 +81,7 @@ def top_10_by_year(db_name):
         selected_year = input("Enter a year to explore: ")
         if int(selected_year) < min_year or int(selected_year) > max_year:
             print("Invalid year!")
-            pause_me = input("Press any key to continue")
+            pause_me = input("Press ENTER key to continue")
         else:
             repeat = 0
     db_response = date_query(cur, selected_year)
@@ -137,6 +139,7 @@ def query_by_artist(db_name):
     db.close()
 
 
+# MatPlotLib BASED QUERIES
 def plot_song_pop_over_time(db_name):
     db = db_tools.sql_connection(db_name)
     print('opening data...')
@@ -144,19 +147,21 @@ def plot_song_pop_over_time(db_name):
     artist_repeat = 1
     while artist_repeat == 1:
         selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
-        ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" GROUP BY song_id ORDER BY week_id ASC'
+        ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%"  GROUP BY song_id ORDER BY week_id ASC'
         cur.execute(ex_str)
         os_stuff.clear()
         db_response = cur.fetchall()
         if len(db_response) != 0:
             artist_repeat = 0
         else:
+            print('No results found')
+            pause_me = input('Press ENTER to Continue')
             pass
     songs = []
     menu_counter = 1
     os_stuff.clear()
     for line in db_response:
-        print(f'{menu_counter}. {line[4]} by {line[5]} ({line[2][:10]})')
+        print(f'{menu_counter}. {line[4]} by {line[5]} ({line[2][:4]})')
         songs.append(line[4])
         menu_counter += 1
     repeat = 1
@@ -184,7 +189,6 @@ def plot_song_pop_over_time(db_name):
     plt.plot_date(dates, chart_positions, '-')
     plt.gca().invert_yaxis()
     plt.show()
-    pause_me = input("Press any key to continue.")
 
 
 def plot_artist_pop_over_time(db_name):
@@ -208,13 +212,34 @@ def plot_artist_pop_over_time(db_name):
     chart_positions = []
     for line in db_response:
         line_date = line[2][:10]
-        dates.append(datetime.strptime(line_date, '%Y-%m-%d'))
+        dates.append(datetime.strptime(line_date, '%Y-%m-%d').date())
         chart_positions.append(line[3])
     plt.plot_date(dates, chart_positions, '-')
     plt.gca().invert_yaxis()
-    plt.show()
-    pause_me = input("Press ENTER key to continue.")
 
+    plt.show()
+
+
+# PANDAS QUERIES
+def stats_by_artist(db_name):
+    db = db_tools.sql_connection(db_name)
+    print('opening data...')
+    artist_repeat = 1
+    while artist_repeat == 1:
+        selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
+        db_response = pd.read_sql_query(f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" ORDER BY week_id ASC', db)
+        os_stuff.clear()
+        if len(db_response) != 0:
+            artist_repeat = 0
+        else:
+            print('No results found')
+            pause_me = input('Press ENTER to Continue')
+            pass
+    artist_data = pd.DataFrame(db_response)
+    artist_data = artist_data.set_index('id')
+
+    print(artist_data.groupby(['song_title']).mean())
+    pause_me = input('Press ENTER to continue.')
 
 
 # HELPER FUNCTIONS
@@ -233,6 +258,7 @@ def print_db_results(db_response):
     pause_me = input('Press ENTER key to continue')
 
 
+# PRIMARY FUNCTION
 def db_query(db_name):
     intro(db_name)
     query_menu(db_name)
