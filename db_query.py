@@ -25,13 +25,16 @@ def query_menu(db_name):
     while repeat == 1:
         os_stuff.clear()
         print('******************** PICK A QUERY ********************')
+        print('BASIC SQL QUERIES')
         print('01 - Songs in Top 10 for a given year')
         print('02 - Songs in Top 10 for a given year and month')
         print('03 - Songs in Top 10 for a given Artist')
         print('')
+        print('MatPlotLib QUERIES')
         print('11 - Plots Song Popularity over time')
         print('12 - Plots Artist Popularity over time')
         print('')
+        print('PANDAS-BASED QUERIES')
         print('21 - Stats by Artist')
         print('')
         print('99 - EXIT')
@@ -67,6 +70,7 @@ def query_menu(db_name):
 
 # BASIC QUERIES
 def top_10_by_year(db_name):
+    os_stuff.clear()
     db = db_tools.sql_connection(db_name)
     print('opening data...')
     cur = db.cursor()
@@ -90,6 +94,7 @@ def top_10_by_year(db_name):
 
 
 def top_10_by_yr_and_mo(db_name):
+    os_stuff.clear()
     db = db_tools.sql_connection(db_name)
     print('opening data...')
     cur = db.cursor()
@@ -128,6 +133,7 @@ def top_10_by_yr_and_mo(db_name):
 
 
 def query_by_artist(db_name):
+    os_stuff.clear()
     db = db_tools.sql_connection(db_name)
     print('opening data...')
     cur = db.cursor()
@@ -141,6 +147,7 @@ def query_by_artist(db_name):
 
 # MatPlotLib BASED QUERIES
 def plot_song_pop_over_time(db_name):
+    os_stuff.clear()
     db = db_tools.sql_connection(db_name)
     print('opening data...')
     cur = db.cursor()
@@ -192,6 +199,7 @@ def plot_song_pop_over_time(db_name):
 
 
 def plot_artist_pop_over_time(db_name):
+    os_stuff.clear()
     db = db_tools.sql_connection(db_name)
     print('opening data...')
     cur = db.cursor()
@@ -222,6 +230,7 @@ def plot_artist_pop_over_time(db_name):
 
 # PANDAS QUERIES
 def stats_by_artist(db_name):
+    os_stuff.clear()
     db = db_tools.sql_connection(db_name)
     print('opening data...')
     artist_repeat = 1
