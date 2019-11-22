@@ -2,6 +2,7 @@
 
 import csv
 import os_stuff
+import pandas as pd
 
 
 def read_print_csv(data_file):
@@ -13,26 +14,11 @@ def read_print_csv(data_file):
           f'which will, then, be returned')
     print(' ')
     pause_me = input('Press ENTER key to begin.')
-    with open(data_file, 'r') as my_data:
-        my_data_list = list(csv.reader(my_data))
-
-    my_data_list.pop(0)  # Toss headings
-    my_data_list.pop(0)  # Toss blank line
-
+    my_data_list = pd.read_csv(data_file)
+    print(' ')
     print('The data has been read from CSV & loaded into the list')
     print(f'There are {len(my_data_list)} records.')
-    preview_range = input('How many records would you like to see to verify this? ')
-    if not preview_range.isdigit():
-        for item in range(5):
-            print(my_data_list[item])
-        print(f"Yeah, I did not understand what '{preview_range}' meant. So, here's 5.")
-    elif int(preview_range) > len(my_data_list)-1:
-        for item in range(5):
-            print(my_data_list[item])
-        print('Yeah, I did not understand that. So, here is 5.')
-    else:
-        for item in range(int(preview_range)):
-            print(my_data_list[item])
-    print(' ')
+    pause_me = input('Press ENTER to verify this? ')
+    print(my_data_list.head())
     pause_me = input('Press ENTER key to continue to the next step.')
     return my_data_list

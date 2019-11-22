@@ -35,7 +35,7 @@ def query_menu(db_name):
         print('12 - Plots Artist Popularity over time')
         print('')
         print('PANDAS-BASED QUERIES')
-        print('21 - Stats by Artist')
+        print('21 - Stats by Artist (Work In Progress)')
         print('')
         print('99 - EXIT')
         print('')
@@ -74,10 +74,10 @@ def top_10_by_year(db_name):
     db = db_tools.sql_connection(db_name)
     print('opening data...')
     cur = db.cursor()
-    cur.execute('SELECT min(week_id) FROM music')
-    min_year = int(cur.fetchone()[0][:4])
-    cur.execute('SELECT max(week_id) FROM music')
-    max_year = int(cur.fetchone()[0][:4])
+    cur.execute('SELECT min(WeekID) FROM music')
+    min_year = int(cur.fetchone()[0][-4::])
+    cur.execute('SELECT max(WeekID) FROM music')
+    max_year = int(cur.fetchone()[0][-4::])
     os_stuff.clear()
     print("DB contains data from " + str(min_year) + " to " + str(max_year) + ".")
     repeat = 1
@@ -98,10 +98,10 @@ def top_10_by_yr_and_mo(db_name):
     db = db_tools.sql_connection(db_name)
     print('opening data...')
     cur = db.cursor()
-    cur.execute('SELECT min(week_id) FROM music')
-    min_year = int(cur.fetchone()[0][:4])
-    cur.execute('SELECT max(week_id) FROM music')
-    max_year = int(cur.fetchone()[0][:4])
+    cur.execute('SELECT min(WeekID) FROM music')
+    min_year = int(cur.fetchone()[0][-4::])
+    cur.execute('SELECT max(WeekID) FROM music')
+    max_year = int(cur.fetchone()[0][-4::])
     os_stuff.clear()
     print("DB contains data from " + str(min_year) + " to " + str(max_year) + ".")
     repeat = 1
@@ -117,7 +117,7 @@ def top_10_by_yr_and_mo(db_name):
             repeat = 0
     repeat = 1
     while repeat == 1:
-        selected_month = input("Enter a month as a 2 digit number (e.g. May = 05): ")
+        selected_month = input("Enter a month as a number: ")
         if not selected_month.isdigit():
             print("Invalid month!")
             pause_me = input("Press any key to continue")
@@ -126,7 +126,7 @@ def top_10_by_yr_and_mo(db_name):
             pause_me = input("Press any key to continue")
         else:
             repeat = 0
-    date_string = selected_year + "-" + selected_month
+    date_string = selected_month + '/' + selected_year
     db_response = date_query(cur, date_string)
     print_db_results(db_response)
     db.close()
@@ -138,7 +138,7 @@ def query_by_artist(db_name):
     print('opening data...')
     cur = db.cursor()
     selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
-    ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" AND chart_position <= 10 GROUP BY song_id ORDER BY week_id ASC'
+    ex_str = f'SELECT * FROM music WHERE Performer LIKE "%{selected_artist}%" AND "Week Position" <= 10 GROUP BY SongID ORDER BY WeekID ASC'
     cur.execute(ex_str)
     db_response = cur.fetchall()
     print_db_results(db_response)
@@ -154,7 +154,7 @@ def plot_song_pop_over_time(db_name):
     artist_repeat = 1
     while artist_repeat == 1:
         selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
-        ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%"  GROUP BY song_id ORDER BY week_id ASC'
+        ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%"  GROUP BY song_id ORDER BY WeekID ASC'
         cur.execute(ex_str)
         os_stuff.clear()
         db_response = cur.fetchall()
@@ -183,7 +183,7 @@ def plot_song_pop_over_time(db_name):
             pass
     song_index = int(song_selection) - 1
     print(f"You chose {songs[song_index]}")
-    ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" AND song_title LIKE "{songs[song_index]}" ORDER BY week_id ASC'
+    ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" AND song_title LIKE "{songs[song_index]}" ORDER BY WeekID ASC'
     cur.execute(ex_str)
     os_stuff.clear()
     db_response = cur.fetchall()
@@ -206,7 +206,7 @@ def plot_artist_pop_over_time(db_name):
     artist_repeat = 1
     while artist_repeat == 1:
         selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
-        ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" ORDER BY week_id ASC'
+        ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" ORDER BY WeekID ASC'
         cur.execute(ex_str)
         os_stuff.clear()
         db_response = cur.fetchall()
@@ -236,7 +236,7 @@ def stats_by_artist(db_name):
     artist_repeat = 1
     while artist_repeat == 1:
         selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
-        db_response = pd.read_sql_query(f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" ORDER BY week_id ASC', db)
+        db_response = pd.read_sql_query(f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" ORDER BY WeekID ASC', db)
         os_stuff.clear()
         if len(db_response) != 0:
             artist_repeat = 0
@@ -253,7 +253,7 @@ def stats_by_artist(db_name):
 
 # HELPER FUNCTIONS
 def date_query(cur, date_string):
-    ex_str = f'SELECT * FROM music WHERE week_id LIKE "%{date_string}%" AND chart_position <= 10 GROUP BY song_id'
+    ex_str = f'SELECT * FROM music WHERE WeekID LIKE "%{date_string}%" AND "Week Position" <= 10 GROUP BY SongID'
     cur.execute(ex_str)
     db_response = cur.fetchall()
     return db_response
