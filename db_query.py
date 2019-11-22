@@ -154,7 +154,7 @@ def plot_song_pop_over_time(db_name):
     artist_repeat = 1
     while artist_repeat == 1:
         selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
-        ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%"  GROUP BY song_id ORDER BY WeekID ASC'
+        ex_str = f'SELECT * FROM music WHERE Performer LIKE "%{selected_artist}%"  GROUP BY SongID ORDER BY WeekID ASC'
         cur.execute(ex_str)
         os_stuff.clear()
         db_response = cur.fetchall()
@@ -183,7 +183,7 @@ def plot_song_pop_over_time(db_name):
             pass
     song_index = int(song_selection) - 1
     print(f"You chose {songs[song_index]}")
-    ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" AND song_title LIKE "{songs[song_index]}" ORDER BY WeekID ASC'
+    ex_str = f'SELECT * FROM music WHERE Performer LIKE "%{selected_artist}%" AND Song LIKE "{songs[song_index]}" ORDER BY WeekID ASC'
     cur.execute(ex_str)
     os_stuff.clear()
     db_response = cur.fetchall()
@@ -206,7 +206,7 @@ def plot_artist_pop_over_time(db_name):
     artist_repeat = 1
     while artist_repeat == 1:
         selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
-        ex_str = f'SELECT * FROM music WHERE artist LIKE "%{selected_artist}%" ORDER BY WeekID ASC'
+        ex_str = f'SELECT * FROM music WHERE Performer LIKE "%{selected_artist}%" ORDER BY WeekID ASC'
         cur.execute(ex_str)
         os_stuff.clear()
         db_response = cur.fetchall()
