@@ -1,4 +1,5 @@
 # TASK 3 - QUERY THE SQLite DB AND GENERATE INFORMATION FROM THE DATA
+
 import os_stuff
 import db_tools
 
@@ -168,7 +169,7 @@ def plot_song_pop_over_time(db_name):
     menu_counter = 1
     os_stuff.clear()
     for line in db_response:
-        print(f'{menu_counter}. {line[4]} by {line[5]} ({line[2][:4]})')
+        print(f'{menu_counter}. {line[4]} by {line[5]} ({line[2][-4::]})')
         songs.append(line[4])
         menu_counter += 1
     repeat = 1
@@ -190,9 +191,11 @@ def plot_song_pop_over_time(db_name):
     dates = []
     chart_positions = []
     for line in db_response:
-        line_date = line[2][:10]
-        dates.append(datetime.strptime(line_date, '%Y-%m-%d'))
+        line_date = line[2]
+        dates.append(datetime.strptime(line_date, '%m/%d/%Y'))
         chart_positions.append(line[3])
+    dates, chart_positions = zip(*sorted(zip(dates, chart_positions)))
+    pd.plotting.register_matplotlib_converters()
     plt.plot_date(dates, chart_positions, '-')
     plt.gca().invert_yaxis()
     plt.show()
@@ -220,8 +223,10 @@ def plot_artist_pop_over_time(db_name):
     chart_positions = []
     for line in db_response:
         line_date = line[2][:10]
-        dates.append(datetime.strptime(line_date, '%Y-%m-%d').date())
+        dates.append(datetime.strptime(line_date, '%m/%d/%Y').date())
         chart_positions.append(line[3])
+    dates, chart_positions = zip(*sorted(zip(dates, chart_positions)))
+    pd.plotting.register_matplotlib_converters()
     plt.plot_date(dates, chart_positions, '-')
     plt.gca().invert_yaxis()
 

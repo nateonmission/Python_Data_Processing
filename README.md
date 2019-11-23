@@ -10,7 +10,7 @@ based on that data.
 * Pandas
 
 
-## Instuctions
+## Instructions
 To run the app:
 Save all the files to the same directory.
 type `python project.py` and press `ENTER`
