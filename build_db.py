@@ -13,10 +13,16 @@ def load_data_into_db(db_name, data_list):
 
     def insert_data(db, data_list):
         music_df = pd.DataFrame(data_list)
-        music_df.columns = music_df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace('(', '').str.replace(')', '')
+        music_df.columns = music_df.columns\
+            .str.strip()\
+            .str.lower()\
+            .str.replace(' ', '_')\
+            .str.replace('(', '')\
+            .str.replace(')', '')
         music_df.to_sql('music', con=db, if_exists='replace', index_label='id')
 
     db = db_tools.sql_connection(db_name)
+    print('Putting the data into the base')
     insert_data(db, data_list)
     db.close()
     print('')
