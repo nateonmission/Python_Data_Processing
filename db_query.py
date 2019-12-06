@@ -210,7 +210,15 @@ def plot_artist_pop_over_time(db_name):
     artist_repeat = 1
     while artist_repeat == 1:
         selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
-        ex_str = f'SELECT * FROM music WHERE Performer LIKE "%{selected_artist}%" ORDER BY WeekID ASC'
+        ex_str = f'''
+            SELECT Performer, WeekID, week_position, songid 
+            FROM music 
+            WHERE Performer 
+            LIKE "%{selected_artist}%" 
+            AND
+            week_position <= 10
+            ORDER BY WeekID ASC
+        '''
         cur.execute(ex_str)
         os_stuff.clear()
         db_response = cur.fetchall()
