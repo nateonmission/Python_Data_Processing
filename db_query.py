@@ -199,6 +199,7 @@ def plot_song_pop_over_time(db_name):
     plt.plot_date(dates, chart_positions, '-')
     plt.gca().invert_yaxis()
     plt.show()
+    db.close()
 
 
 def plot_artist_pop_over_time(db_name):
