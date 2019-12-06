@@ -210,33 +210,43 @@ def plot_artist_pop_over_time(db_name):
     artist_repeat = 1
     while artist_repeat == 1:
         selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
-        ex_str = f'''
-            SELECT Performer, WeekID, week_position, songid 
+        search_string1 = f'''
+            SELECT 
+                Performer,  
+                week_position as "Position", 
+                song as "Song", 
+                songid as "ID",
+                min(weekid) as "Date",
+                count(*) as "Count"
             FROM music 
             WHERE Performer 
             LIKE "%{selected_artist}%" 
             AND
             week_position <= 10
-            ORDER BY WeekID ASC
+            GROUP BY songid
         '''
-        cur.execute(ex_str)
         os_stuff.clear()
-        db_response = cur.fetchall()
-        if len(db_response) != 0:
+        cur.execute(search_string1)
+        db_response1 = cur.fetchall()
+        if len(db_response1) != 0:
             artist_repeat = 0
         else:
             print('No results found')
             pause_me = input('Press ENTER to Continue')
             pass
     dates = []
+    songs = []
     chart_positions = []
-    for line in db_response:
-        line_date = line[2][:10]
+    print(db_response1)
+    pause_me = input("ENTER")
+    for line in db_response1:
+        line_date = line[4][:10]
         dates.append(datetime.strptime(line_date, '%m/%d/%Y').date())
-        chart_positions.append(line[3])
-    dates, chart_positions = zip(*sorted(zip(dates, chart_positions)))
+        songs.append(line[2])
+        chart_positions.append(line[5])
+    dates, songs, chart_positions = zip(*sorted(zip(dates, songs, chart_positions)))
     pd.plotting.register_matplotlib_converters()
-    plt.plot_date(dates, chart_positions, '-')
+    plt.plot_date(dates, songs, '-')
     plt.gca().invert_yaxis()
     plt.show()
     db.close()
