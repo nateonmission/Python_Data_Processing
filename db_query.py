@@ -219,8 +219,8 @@ def plot_artist_pop_over_time(db_name):
                 min(weekid) as "Date",
                 count(*) as "Count"
             FROM music 
-            WHERE Performer 
-            LIKE "%{selected_artist}%" 
+            WHERE Performer
+            LIKE "{selected_artist}" 
             AND
             week_position <= 10
             GROUP BY songid
@@ -236,20 +236,24 @@ def plot_artist_pop_over_time(db_name):
             pass
     dates = []
     songs = []
-    chart_positions = []
-    print(db_response1)
+    counts = []
+    db_df = pd.DataFrame(db_response1)
+    pd.set_option('display.expand_frame_repr', False)
+    os_stuff.clear()
+    print(db_df)
     pause_me = input("ENTER")
     for line in db_response1:
         line_date = line[4][:10]
         dates.append(datetime.strptime(line_date, '%m/%d/%Y').date())
         songs.append(line[2])
-        chart_positions.append(line[5])
-    dates, songs, chart_positions = zip(*sorted(zip(dates, songs, chart_positions)))
+        counts.append(line[5])
+    dates, songs, counts = zip(*sorted(zip(dates, songs, counts)))
     pd.plotting.register_matplotlib_converters()
-    plt.plot_date(dates, songs, '-')
-    plt.gca().invert_yaxis()
+    plt.plot_date(dates, counts, '-')
+    plt.gca()
     plt.show()
     db.close()
+    os_stuff.clear()
 
 
 # PANDAS QUERIES
@@ -260,7 +264,19 @@ def stats_by_artist(db_name):
     artist_repeat = 1
     while artist_repeat == 1:
         selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
-        db_response = pd.read_sql_query(f'SELECT * FROM music WHERE performer LIKE "%{selected_artist}%" ORDER BY weekid ASC', db)
+        db_response = pd.read_sql_query(f'''
+            SELECT id, 
+                substr(song, 0, 25) as "Song", 
+                substr(performer, 0, 25) as "Performer",
+                avg(week_position) as "Average Position", 
+                min(peak_position) as "Highest Position", 
+                max(weeks_on_chart) as "Weeks on Chart", 
+                min(weekid) as "First Appearance"
+            FROM music 
+            WHERE performer 
+            LIKE "%{selected_artist}%" 
+            GROUP BY song
+            ''', db)
         os_stuff.clear()
         if len(db_response) != 0:
             artist_repeat = 0
@@ -268,10 +284,11 @@ def stats_by_artist(db_name):
             print('No results found')
             pause_me = input('Press ENTER to Continue')
             pass
+    pd.set_option('display.max_rows', None)
     artist_data = pd.DataFrame(db_response)
     artist_data = artist_data.set_index('id')
 
-    print(artist_data.groupby(['song']).mean())
+    print(artist_data)
     pause_me = input('Press ENTER to continue.')
 
 
