@@ -269,7 +269,7 @@ def stats_by_artist(db_name):
                 substr(song, 0, 25) as "Song", 
                 substr(performer, 0, 25) as "Performer",
                 avg(week_position) as "Average Position", 
-                min(peak_position) as "Highest Position", 
+                min(peak_position) as "Best Position", 
                 max(weeks_on_chart) as "Weeks on Chart", 
                 min(weekid) as "First Appearance"
             FROM music 
