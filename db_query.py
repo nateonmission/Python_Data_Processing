@@ -31,12 +31,10 @@ def query_menu(db_name):
         print('02 - Songs in Top 10 for a given year and month')
         print('03 - Songs in Top 10 for a given Artist')
         print('')
-        print('MatPlotLib QUERIES')
+        print('MatPlotLib/Pandas QUERIES')
         print('11 - Plots Song Popularity over time')
         print('12 - Plots Artist Popularity over time')
-        print('')
-        print('PANDAS-BASED QUERIES')
-        print('21 - Stats by Artist (Work In Progress)')
+        print('13 - Stats by Artist')
         print('')
         print('99 - EXIT')
         print('')
@@ -57,7 +55,7 @@ def query_menu(db_name):
             elif int(selection) == 12:
                 plot_artist_pop_over_time(db_name)
                 repeat = 1
-            elif int(selection) == 21:
+            elif int(selection) == 13:
                 stats_by_artist(db_name)
                 repeat = 1
             elif int(selection) == 99:
