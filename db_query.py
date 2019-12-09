@@ -288,6 +288,7 @@ def stats_by_artist(db_name):
 
     print(artist_data)
     pause_me = input('Press ENTER to continue.')
+    db.close()
 
 
 # HELPER FUNCTIONS
