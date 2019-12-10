@@ -34,7 +34,8 @@ def query_menu(db_name):
         print('MatPlotLib/Pandas QUERIES')
         print('11 - Plots Song Popularity over time')
         print('12 - Plots Artist Popularity over time')
-        print('13 - Stats by Artist')
+        print('13 - Stats for Songs per Artist')
+        print('14 - Stats for Artist')
         print('')
         print('99 - EXIT')
         print('')
@@ -58,6 +59,9 @@ def query_menu(db_name):
             elif int(selection) == 13:
                 stats_by_artist(db_name)
                 repeat = 1
+            elif int(selection) == 14:
+                stats_by_artist_overall(db_name)
+                repeat = 1
             elif int(selection) == 99:
                 break
             else:
@@ -74,9 +78,9 @@ def top_10_by_year(db_name):
     print('opening data...')
     cur = db.cursor()
     cur.execute('SELECT min(WeekID) FROM music')
-    min_year = int(cur.fetchone()[0][-4::])
+    min_year = int(cur.fetchone()[0][:4])
     cur.execute('SELECT max(WeekID) FROM music')
-    max_year = int(cur.fetchone()[0][-4::])
+    max_year = int(cur.fetchone()[0][:4])
     os_stuff.clear()
     print("DB contains data from " + str(min_year) + " to " + str(max_year) + ".")
     repeat = 1
@@ -98,9 +102,9 @@ def top_10_by_yr_and_mo(db_name):
     print('opening data...')
     cur = db.cursor()
     cur.execute('SELECT min(WeekID) FROM music')
-    min_year = int(cur.fetchone()[0][-4::])
+    min_year = int(cur.fetchone()[0][:4])
     cur.execute('SELECT max(WeekID) FROM music')
-    max_year = int(cur.fetchone()[0][-4::])
+    max_year = int(cur.fetchone()[0][:4])
     os_stuff.clear()
     print("DB contains data from " + str(min_year) + " to " + str(max_year) + ".")
     repeat = 1
@@ -125,7 +129,7 @@ def top_10_by_yr_and_mo(db_name):
             pause_me = input("Press any key to continue")
         else:
             repeat = 0
-    date_string = selected_month + '/' + selected_year
+    date_string = selected_year + '-' + selected_month
     db_response = date_query(cur, date_string)
     print_db_results(db_response)
     db.close()
@@ -167,7 +171,7 @@ def plot_song_pop_over_time(db_name):
     menu_counter = 1
     os_stuff.clear()
     for line in db_response:
-        print(f'{menu_counter}. {line[4]} by {line[5]} ({line[2][-4::]})')
+        print(f'{menu_counter}. {line[4]} by {line[5]} ({line[2][:4]})')
         songs.append(line[4])
         menu_counter += 1
     repeat = 1
@@ -189,8 +193,9 @@ def plot_song_pop_over_time(db_name):
     dates = []
     chart_positions = []
     for line in db_response:
-        line_date = line[2]
-        dates.append(datetime.strptime(line_date, '%m/%d/%Y'))
+        #line_date = line[2]
+        #dates.append(datetime.strptime(line_date, '%m/%d/%Y'))
+        dates.append(line[2])
         chart_positions.append(line[3])
     dates, chart_positions = zip(*sorted(zip(dates, chart_positions)))
     pd.plotting.register_matplotlib_converters()
@@ -241,8 +246,9 @@ def plot_artist_pop_over_time(db_name):
     print(db_df)
     pause_me = input("ENTER")
     for line in db_response1:
-        line_date = line[4][:10]
-        dates.append(datetime.strptime(line_date, '%m/%d/%Y').date())
+        #line_date = line[4][:10]
+        #dates.append(datetime.strptime(line_date, '%m/%d/%Y').date())
+        dates.append(line[4])
         songs.append(line[2])
         counts.append(line[5])
     dates, songs, counts = zip(*sorted(zip(dates, songs, counts)))
@@ -274,6 +280,42 @@ def stats_by_artist(db_name):
             WHERE performer 
             LIKE "%{selected_artist}%" 
             GROUP BY song
+            ''', db)
+        os_stuff.clear()
+        if len(db_response) != 0:
+            artist_repeat = 0
+        else:
+            print('No results found')
+            pause_me = input('Press ENTER to Continue')
+            pass
+    pd.set_option('display.max_rows', None)
+    artist_data = pd.DataFrame(db_response)
+    artist_data = artist_data.set_index('id')
+
+    print(artist_data)
+    pause_me = input('Press ENTER to continue.')
+    db.close()
+
+def stats_by_artist_overall(db_name):
+    os_stuff.clear()
+    db = db_tools.sql_connection(db_name)
+    print('opening data...')
+    artist_repeat = 1
+    while artist_repeat == 1:
+        selected_artist = input("Enter a SOLO ARTIST or a BAND: ")
+        # substr(song, 0, 25) as "Song",
+        db_response = pd.read_sql_query(f'''
+            SELECT id, 
+                substr(performer, 0, 25) as "Performer",
+                avg(week_position) as "Average Position", 
+                min(peak_position) as "Best Position", 
+                sum(weeks_on_chart) as "Total Wks on Chrt", 
+                min(weekid) as "First Appearance",
+                max(weekid) as "Last Appearance"
+            FROM music 
+            WHERE performer 
+            LIKE "%{selected_artist}%" 
+            GROUP BY performer
             ''', db)
         os_stuff.clear()
         if len(db_response) != 0:

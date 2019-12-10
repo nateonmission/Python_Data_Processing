@@ -2,17 +2,16 @@
 
 import os_stuff
 import db_tools
-import pandas as pd
 
 
-def load_data_into_db(db_name, data_list):
+def load_data_into_db(db_name, music_df):
     os_stuff.clear()
     print("Now, we'll load that data into the a Pandas DataFrame and then send it into a SQLite DB.")
     print(" ")
     pause_me = input("Press ENTER key to continue.")
 
-    def insert_data(db, data_list):
-        music_df = pd.DataFrame(data_list)
+    def insert_data(db, music_df):
+        # music_df = pd.DataFrame(data_list)
         music_df.columns = music_df.columns\
             .str.strip()\
             .str.lower()\
@@ -23,7 +22,7 @@ def load_data_into_db(db_name, data_list):
 
     db = db_tools.sql_connection(db_name)
     print('Putting the data into the base')
-    insert_data(db, data_list)
+    insert_data(db, music_df)
     db.close()
     print('')
     print("Whew... So, that's done.")
