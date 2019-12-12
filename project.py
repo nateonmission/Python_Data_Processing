@@ -5,8 +5,8 @@ import read_csv
 import build_db
 import db_query
 
-data_file = 'MusicData.csv'
-db_name = 'billboard.db'
+data_file = './MusicData.csv'
+db_name = './billboard.db'
 
 os_stuff.clear_old_file(db_name)
 
