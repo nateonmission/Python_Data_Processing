@@ -11,15 +11,17 @@ based on that data.
 
 
 ## Instructions
-To run the app:
+To run the app in Windows:
+
 Save all the files to the same directory.
+
 Set up a virtual environment by typing:
 
 `python -m venv env` and press `Enter`
 
 Then, activate thusly:
 
-`./env/Scripts/activate` and press `Enter`
+`.\env\Scripts\activate` and press `Enter`
 
 Next, you'll want to install Matplotlib and Pandas.
 

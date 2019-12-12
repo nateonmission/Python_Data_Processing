@@ -296,6 +296,7 @@ def stats_by_artist(db_name):
     pause_me = input('Press ENTER to continue.')
     db.close()
 
+
 def stats_by_artist_overall(db_name):
     os_stuff.clear()
     db = db_tools.sql_connection(db_name)
