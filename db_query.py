@@ -129,7 +129,11 @@ def top_10_by_yr_and_mo(db_name):
             pause_me = input("Press any key to continue")
         else:
             repeat = 0
-    date_string = selected_year + '-' + selected_month
+    if len(selected_month) == 1:
+        selected_month = '0' + selected_month
+    else:
+        pass
+    date_string = selected_year + '-' + selected_month + '-' ;
     db_response = date_query(cur, date_string)
     print_db_results(db_response)
     db.close()
